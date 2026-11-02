@@ -1,0 +1,12 @@
+# Get-WinEvent ... | ConvertTo-Json (Windows PowerShell / PowerShell 7).
+name = "powershell-winevent"
+description = "Windows events exported with Get-WinEvent | ConvertTo-Json"
+base = "json"
+detect.all_keys = ["Id", "MachineName", "ProviderName", "LogName"]
+timestamp = { field = "TimeCreated" }
+group_key = "Id"
+self_fields = ["MachineName"]
+
+[fields]
+"MachineName" = "hostname"
+"UserId.Value" = "username"

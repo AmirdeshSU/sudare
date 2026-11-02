@@ -1,0 +1,41 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: ~
+  group: ~
+  error: CEF header has fewer than 7 fields
+  fields: {}
+- lines:
+    - 2
+    - 2
+  timestamp: ~
+  group: "1"
+  error: ~
+  fields:
+    cef_version: "1"
+    device_vendor: x
+    device_product: y
+    device_version: z
+    signature_id: "1"
+    name: n
+    severity: "5"
+    src: 192.0.2.9
+    dst: ""
+- lines:
+    - 3
+    - 3
+  timestamp: ~
+  group: ~
+  error: no CEF header
+  fields: {}
+- lines:
+    - 4
+    - 4
+  timestamp: ~
+  group: ~
+  error: CEF header has fewer than 7 fields
+  fields: {}

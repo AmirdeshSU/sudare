@@ -1,0 +1,8 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+{"data": [
+  {"eventType": "Win-Security-4625", "receiveTime": "2026-10-29T18:00:00Z", "rawMessage": "<13>Oct 29 18:00:00 [[FQDN_INTERNAL_14]] Security: 4625 failed logon user=[[USER_91]] src=198.51.100.33", "attributes": {"eventSeverity": "5"}},
+  {"eventType": "Win-Security-4625", "receiveTime": "2026-10-29T18:00:05Z", "rawMessage": "<13>Oct 29 18:00:05 [[FQDN_INTERNAL_14]] Security: 4625 failed logon user=[[USER_91]] src=198.51.100.33", "attributes": {"eventSeverity": "5"}}
+], "result": {"code": 0}}

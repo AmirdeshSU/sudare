@@ -1,0 +1,18 @@
+[package]
+name = "sudare-py"
+description = "Python bindings for sudare-core (mask / unmask)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+publish = false
+
+[lib]
+name = "sudare"
+crate-type = ["cdylib"]
+
+[dependencies]
+sudare-core.workspace = true
+getrandom.workspace = true
+pyo3 = { version = "0.30.1", features = ["extension-module", "abi3-py310"] }

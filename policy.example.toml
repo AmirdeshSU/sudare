@@ -1,0 +1,49 @@
+# Sudare masking policy. Copy to sudare.toml and pass with --policy.
+#
+# Precedence for every value: denylist > secrets > allowlist > rule > type action.
+# Secrets (passwords, keys, tokens) are always masked, in every mode.
+
+# "default": mask internal IPs, hostnames, usernames, emails and internal URLs;
+#            keep public IOCs and hashes so the model can reason about them.
+# "strict":  mask every type and ignore the allowlist. Threat-intel verdicts are
+#            attached to the tokens instead.
+mode = "default"
+
+[classify]
+# Added to the built-ins: RFC 1918, 100.64/10, loopback, link-local, ULA.
+internal_networks = ["198.18.0.0/15"]
+# Added to the built-ins: .local .internal .lan .home.arpa .corp, and single-label names.
+internal_domains = ["corp.example.com"]
+# Learn internal domains from the fields where a log source names itself.
+learn_internal_domains = true
+
+# mask: replace with a token, restored in the final report
+# keep: send as-is
+# drop: replace with [[REDACTED_<TYPE>]], never restored
+[actions]
+ip.internal = "mask"
+ip.public = "keep"
+ip.reserved = "keep"
+fqdn.internal = "mask"
+fqdn.public = "keep"
+url.internal = "mask"
+url.public = "keep"
+hostname = "mask"
+email = "mask"
+username = "mask"
+mac = "mask"
+hash = "keep"
+file_path = "keep"
+process = "keep"
+cve = "keep"
+
+# Custom patterns. The name becomes the token prefix: [[EMPLOYEE_ID_17]].
+[[rules]]
+name = "employee_id"
+pattern = 'EMP-\d{6}'
+action = "mask"
+
+# One value per line, # for comments. Paths are relative to this file.
+# [lists]
+# allow = "allow.txt"   # never masked (ignored in strict mode)
+# deny  = "deny.txt"    # always masked, wherever they appear

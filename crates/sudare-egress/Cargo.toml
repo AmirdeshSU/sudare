@@ -1,0 +1,25 @@
+[package]
+name = "sudare-egress"
+description = "The only Sudare crate that talks to the network: LLM providers and threat-intel lookups."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+[dependencies]
+sudare-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+async-trait.workspace = true
+# Default TLS: rustls with the OS trust store (rustls-platform-verifier), so
+# corporate proxy CAs work. HTTPS_PROXY / NO_PROXY are honoured.
+reqwest = { version = "0.13.5", default-features = false, features = ["default-tls", "http2", "system-proxy", "json"] }
+rusqlite = { version = "0.41.1", features = ["bundled"] }
+url = "2.5.8"
+zeroize = "1.9.1"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }

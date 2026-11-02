@@ -1,0 +1,35 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: "2026-10-29T15:10:00.000Z"
+  group: "4624"
+  error: ~
+  fields:
+    "@timestamp": "2026-10-29T15:10:00.000Z"
+    winlog.channel: Security
+    winlog.event_id: "4624"
+    winlog.computer_name: dc01.corp.example.com
+    winlog.event_data.TargetUserName: svc_backup
+    winlog.event_data.TargetDomainName: CORP
+    winlog.event_data.IpAddress: 192.0.2.66
+    winlog.event_data.LogonType: "3"
+    host.name: dc01
+- lines:
+    - 2
+    - 2
+  timestamp: "2026-10-29T15:12:30.000Z"
+  group: "4672"
+  error: ~
+  fields:
+    "@timestamp": "2026-10-29T15:12:30.000Z"
+    winlog.channel: Security
+    winlog.event_id: "4672"
+    winlog.computer_name: dc01.corp.example.com
+    winlog.event_data.SubjectUserName: svc_backup
+    winlog.event_data.SubjectDomainName: CORP
+    winlog.event_data.PrivilegeList: SeDebugPrivilege
+    host.name: dc01

@@ -1,0 +1,51 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: "2026-10-29T14:20:01.003Z"
+  group: AUTH
+  error: ~
+  fields:
+    pri: "165"
+    timestamp: "2026-10-29T14:20:01.003Z"
+    hostname: app-02.corp.example.com
+    app: webapp
+    procid: "4211"
+    msgid: AUTH
+    sd.meta@32473.user: asmith
+    sd.meta@32473.src: 192.0.2.44
+    message: login failed for asmith from 198.51.100.99
+- lines:
+    - 2
+    - 2
+  timestamp: "2026-10-29T14:20:03.120Z"
+  group: AUTH
+  error: ~
+  fields:
+    pri: "165"
+    timestamp: "2026-10-29T14:20:03.120Z"
+    hostname: app-02.corp.example.com
+    app: webapp
+    procid: "4211"
+    msgid: AUTH
+    sd.meta@32473.user: asmith
+    sd.meta@32473.src: 192.0.2.44
+    email: asmith@corp.example.com
+    message: login succeeded for asmith email=asmith@corp.example.com
+- lines:
+    - 3
+    - 3
+  timestamp: "2026-10-29T14:21:00.000Z"
+  group: EXPORT
+  error: ~
+  fields:
+    pri: "165"
+    timestamp: "2026-10-29T14:21:00.000Z"
+    hostname: app-02.corp.example.com
+    app: webapp
+    procid: "4211"
+    msgid: EXPORT
+    message: "user asmith exported 5000 records to https://files.example.org/upload?id=93ab"

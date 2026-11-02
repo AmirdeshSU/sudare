@@ -1,0 +1,6 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+LEEF:1.0|ExampleVendor|ExampleIDS|3.0|SQLi|src=203.0.113.9	dst=[[IP_INTERNAL_7]]	usrName=[[USER_90]]	identHostName=[[HOST_60]]	url=[[URL_INTERNAL_27]]	devTime=Oct 29 2026 14:40:00
+LEEF:2.0|ExampleVendor|ExampleIDS|3.0|Scan|^|src=198.51.100.200^dst=[[IP_INTERNAL_44]]^identHostName=[[HOST_97]]^cat=recon

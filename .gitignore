@@ -1,0 +1,12 @@
+/target
+/fuzz/target
+/fuzz/corpus
+/fuzz/artifacts
+*.pending-snap
+*.snap.new
+.env
+.venv/
+__pycache__/
+*.so
+*.pyd
+dist/

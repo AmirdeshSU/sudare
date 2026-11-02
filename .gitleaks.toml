@@ -1,0 +1,12 @@
+# gitleaks: default rules, plus an allowlist for the synthetic test fixtures, which
+# contain fake keys on purpose (they test secret masking).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "synthetic fixtures and their snapshots"
+paths = [
+    '''^fixtures/''',
+    '''^crates/sudare-core/tests/snapshots/''',
+    '''^crates/sudare-core/src/extract\.rs$''',
+]

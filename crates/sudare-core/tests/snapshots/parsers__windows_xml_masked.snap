@@ -1,0 +1,9 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+<Events>
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event"><System><Provider Name="Microsoft-Windows-Security-Auditing"/><EventID>4625</EventID><TimeCreated SystemTime="2026-10-29T15:01:02.000Z"/><Channel>Security</Channel><Computer>[[FQDN_INTERNAL_38]]</Computer></System><EventData><Data Name="TargetUserName">[[USER_12]]</Data><Data Name="TargetDomainName">[[HOST_68]]</Data><Data Name="WorkstationName">[[HOST_80]]</Data><Data Name="IpAddress">198.51.100.61</Data><Data Name="LogonType">3</Data></EventData></Event>
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event"><System><Provider Name="Microsoft-Windows-Security-Auditing"/><EventID>4624</EventID><TimeCreated SystemTime="2026-10-29T15:03:40.000Z"/><Channel>Security</Channel><Computer>[[FQDN_INTERNAL_38]]</Computer></System><EventData><Data Name="TargetUserName">[[USER_12]]</Data><Data Name="TargetDomainName">[[HOST_68]]</Data><Data Name="WorkstationName">[[HOST_80]]</Data><Data Name="IpAddress">198.51.100.61</Data><Data Name="LogonType">10</Data></EventData></Event>
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event"><System><Provider Name="Microsoft-Windows-Security-Auditing"/><EventID>4688</EventID><TimeCreated SystemTime="2026-10-29T15:04:12.000Z"/><Channel>Security</Channel><Computer>[[FQDN_INTERNAL_2]]</Computer><Security UserID="[[SID_44]]"/></System><EventData><Data Name="SubjectUserName">[[USER_12]]</Data><Data Name="SubjectDomainName">[[HOST_68]]</Data><Data Name="NewProcessName">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data><Data Name="CommandLine">powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkA</Data><Data Name="ParentProcessName">C:\Windows\explorer.exe</Data></EventData></Event>
+</Events>

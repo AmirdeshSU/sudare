@@ -1,0 +1,38 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: "Oct 29 2026 14:40:00"
+  group: SQLi
+  error: ~
+  fields:
+    leef_version: "1.0"
+    vendor: ExampleVendor
+    product: ExampleIDS
+    product_version: "3.0"
+    event_id: SQLi
+    src: 203.0.113.9
+    dst: 192.0.2.80
+    usrName: dbadmin
+    identHostName: db01
+    url: "http://192.0.2.80/search?q=1'%20OR%201=1"
+    devTime: "Oct 29 2026 14:40:00"
+- lines:
+    - 2
+    - 2
+  timestamp: ~
+  group: Scan
+  error: ~
+  fields:
+    leef_version: "2.0"
+    vendor: ExampleVendor
+    product: ExampleIDS
+    product_version: "3.0"
+    event_id: Scan
+    src: 198.51.100.200
+    dst: 192.0.2.81
+    identHostName: db02
+    cat: recon

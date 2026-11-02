@@ -1,0 +1,5 @@
+[
+  {"eventTime": "2026-10-29T16:00:00Z", "eventName": "ConsoleLogin", "userIdentity": {"userName": "ops-admin", "email": "ops-admin@corp.example.com"}, "sourceIPAddress": "198.51.100.140", "responseElements": {"ConsoleLogin": "Success"}},
+  {"eventTime": "2026-10-29T16:05:00Z", "eventName": "CreateUser", "userIdentity": {"userName": "ops-admin"}, "sourceIPAddress": "198.51.100.140", "requestParameters": {"userName": "backdoor-user"}},
+  {"eventTime": "2026-10-29T16:05:20Z", "eventName": "CreateAccessKey", "userIdentity": {"userName": "ops-admin"}, "sourceIPAddress": "198.51.100.140", "responseElements": {"accessKey": {"accessKeyId": "AKIAEXAMPLEEXAMPLE12", "secretAccessKey": "wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY"}}}
+]

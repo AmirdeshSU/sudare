@@ -1,0 +1,39 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: ~
+  group: ~
+  error: ~
+  fields:
+    host: proxy01
+    user: nfernandes
+    client: 192.0.2.101
+    url: "http://intranet.corp.example.com/hr/payroll.xlsx"
+- lines:
+    - 2
+    - 2
+  timestamp: ~
+  group: ~
+  error: ~
+  fields:
+    host: proxy01
+    user: nfernandes
+    client: 192.0.2.101
+    url: "https://paste.example.org/raw/8fj2k"
+    mac: "00:1a:2b:3c:4d:5e"
+- lines:
+    - 3
+    - 3
+  timestamp: ~
+  group: ~
+  error: ~
+  fields:
+    host: proxy01
+    user: nfernandes
+    client: 192.0.2.101
+    url: "http://198.51.100.250/payload.bin"
+    note: matches CVE-2024-3400 exploit pattern

@@ -1,0 +1,2 @@
+{"@timestamp":"2026-10-29T15:10:00.000Z","winlog":{"channel":"Security","event_id":4624,"computer_name":"dc01.corp.example.com","event_data":{"TargetUserName":"svc_backup","TargetDomainName":"CORP","IpAddress":"192.0.2.66","LogonType":"3"}},"host":{"name":"dc01"}}
+{"@timestamp":"2026-10-29T15:12:30.000Z","winlog":{"channel":"Security","event_id":4672,"computer_name":"dc01.corp.example.com","event_data":{"SubjectUserName":"svc_backup","SubjectDomainName":"CORP","PrivilegeList":"SeDebugPrivilege"}},"host":{"name":"dc01"}}

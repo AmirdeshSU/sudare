@@ -1,0 +1,7 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+CEF:0|ExampleVendor|ExampleFW|1.0|100|Blocked outbound connection|7|src=[[IP_INTERNAL_40]] dst=203.0.113.77 spt=50112 dpt=443 suser=[[USER_92]] shost=[[HOST_5]] dhost=c2.example.org request=https://c2.example.org/beacon act=blocked
+Oct 29 14:30:12 [[HOST_2]] CEF:0|ExampleVendor|ExampleFW|1.0|100|Blocked outbound connection|7|src=[[IP_INTERNAL_40]] dst=203.0.113.77 suser=[[USER_92]] shost=[[HOST_5]] act=blocked
+CEF:0|ExampleVendor|ExampleEDR|2.1|proc-01|Suspicious process|9|shost=[[HOST_5]] suser=[[USER_21]] fname=invoice.pdf.exe filePath=C:\\Users\\[[USER_21]]\\Downloads\\invoice.pdf.exe fileHash=275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f

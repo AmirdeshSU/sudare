@@ -1,0 +1,2 @@
+LEEF:1.0|ExampleVendor|ExampleIDS|3.0|SQLi|src=203.0.113.9	dst=192.0.2.80	usrName=dbadmin	identHostName=db01	url=http://192.0.2.80/search?q=1'%20OR%201=1	devTime=Oct 29 2026 14:40:00
+LEEF:2.0|ExampleVendor|ExampleIDS|3.0|Scan|^|src=198.51.100.200^dst=192.0.2.81^identHostName=db02^cat=recon

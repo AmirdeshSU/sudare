@@ -1,0 +1,26 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 2
+    - 2
+  timestamp: "2026-10-29T18:00:00Z"
+  group: Win-Security-4625
+  error: ~
+  fields:
+    eventType: Win-Security-4625
+    receiveTime: "2026-10-29T18:00:00Z"
+    rawMessage: "<13>Oct 29 18:00:00 dc02.corp.example.com Security: 4625 failed logon user=hgupta src=198.51.100.33"
+    attributes.eventSeverity: "5"
+- lines:
+    - 3
+    - 3
+  timestamp: "2026-10-29T18:00:05Z"
+  group: Win-Security-4625
+  error: ~
+  fields:
+    eventType: Win-Security-4625
+    receiveTime: "2026-10-29T18:00:05Z"
+    rawMessage: "<13>Oct 29 18:00:05 dc02.corp.example.com Security: 4625 failed logon user=hgupta src=198.51.100.33"
+    attributes.eventSeverity: "5"

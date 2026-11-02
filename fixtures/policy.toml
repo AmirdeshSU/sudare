@@ -1,0 +1,8 @@
+# Policy used by the test suite. Fixtures use documentation ranges only:
+# 192.0.2.0/24 and corp.example.com are "internal" here; 198.51.100.0/24 and
+# 203.0.113.0/24 stand in for public addresses (Engine::documentation_ranges_public).
+mode = "default"
+
+[classify]
+internal_networks = ["192.0.2.0/24"]
+internal_domains = ["corp.example.com"]

@@ -1,0 +1,9 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+[
+  {"eventTime": "2026-10-29T16:00:00Z", "eventName": "ConsoleLogin", "userIdentity": {"userName": "[[USER_5]]", "email": "[[EMAIL_29]]"}, "sourceIPAddress": "198.51.100.140", "responseElements": {"ConsoleLogin": "Success"}},
+  {"eventTime": "2026-10-29T16:05:00Z", "eventName": "CreateUser", "userIdentity": {"userName": "[[USER_5]]"}, "sourceIPAddress": "198.51.100.140", "requestParameters": {"userName": "[[USER_95]]"}},
+  {"eventTime": "2026-10-29T16:05:20Z", "eventName": "CreateAccessKey", "userIdentity": {"userName": "[[USER_5]]"}, "sourceIPAddress": "198.51.100.140", "responseElements": {"accessKey": {"accessKeyId": "[[SECRET_25]]", "secretAccessKey": "[[SECRET_59]]"}}}
+]

@@ -1,0 +1,11 @@
+# FortiSIEM public REST API: GET /phoenix/rest/pub/incident/triggeringEvents
+# returns {"data": [event, ...], "result": {...}}. Only the documented top-level event
+# fields are mapped. rawMessage is the original device log and goes through the
+# normal extractors. Attribute names inside `attributes` vary by device type and
+# are not mapped here; add them in your own mapping (see CONTRIBUTING.md).
+name = "fortisiem"
+description = "FortiSIEM triggering events (public REST API JSON)"
+base = "json"
+detect.all_keys = ["rawMessage", "eventType", "receiveTime"]
+timestamp = { field = "receiveTime" }
+group_key = "eventType"

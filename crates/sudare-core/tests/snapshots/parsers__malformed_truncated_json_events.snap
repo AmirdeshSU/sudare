@@ -1,0 +1,11 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: ~
+  group: ~
+  error: EOF while parsing a string at line 1 column 47
+  fields: {}

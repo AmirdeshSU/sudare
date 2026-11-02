@@ -1,0 +1,5 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+[{"user":"[[USER_37]]","src":"[[IP_INTERNAL_37]]"},{"user":"asm

@@ -1,0 +1,66 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: ~
+  group: "100"
+  error: ~
+  fields:
+    cef_version: "0"
+    device_vendor: ExampleVendor
+    device_product: ExampleFW
+    device_version: "1.0"
+    signature_id: "100"
+    name: Blocked outbound connection
+    severity: "7"
+    src: 192.0.2.21
+    dst: 203.0.113.77
+    spt: "50112"
+    dpt: "443"
+    suser: "CORP\\mlee"
+    shost: WS-22
+    dhost: c2.example.org
+    request: "https://c2.example.org/beacon"
+    act: blocked
+- lines:
+    - 2
+    - 2
+  timestamp: ~
+  group: "100"
+  error: ~
+  fields:
+    cef_version: "0"
+    device_vendor: ExampleVendor
+    device_product: ExampleFW
+    device_version: "1.0"
+    signature_id: "100"
+    name: Blocked outbound connection
+    severity: "7"
+    syslog.hostname: fw02
+    src: 192.0.2.21
+    dst: 203.0.113.77
+    suser: "CORP\\mlee"
+    shost: WS-22
+    act: blocked
+- lines:
+    - 3
+    - 3
+  timestamp: ~
+  group: proc-01
+  error: ~
+  fields:
+    cef_version: "0"
+    device_vendor: ExampleVendor
+    device_product: ExampleEDR
+    device_version: "2.1"
+    signature_id: proc-01
+    name: Suspicious process
+    severity: "9"
+    shost: WS-22
+    suser: mlee
+    fname: invoice.pdf.exe
+    filePath: "C:\\Users\\mlee\\Downloads\\invoice.pdf.exe"
+    fileHash: 275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f

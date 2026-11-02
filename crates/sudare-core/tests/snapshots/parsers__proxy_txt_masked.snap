@@ -1,0 +1,7 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+2026-10-29 16:30:01 host=[[HOST_67]] ALLOW user=[[USER_58]] client=[[IP_INTERNAL_73]] url=[[URL_INTERNAL_68]]
+2026-10-29 16:30:09 host=[[HOST_67]] ALLOW user=[[USER_58]] client=[[IP_INTERNAL_73]] url=https://paste.example.org/raw/8fj2k mac=[[MAC_10]]
+2026-10-29 16:31:44 host=[[HOST_67]] BLOCK user=[[USER_58]] client=[[IP_INTERNAL_73]] url=http://198.51.100.250/payload.bin note="matches CVE-2024-3400 exploit pattern"

@@ -1,0 +1,6 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+{"@timestamp":"2026-10-29T15:10:00.000Z","winlog":{"channel":"Security","event_id":4624,"computer_name":"[[FQDN_INTERNAL_38]]","event_data":{"TargetUserName":"[[USER_96]]","TargetDomainName":"[[HOST_68]]","IpAddress":"[[IP_INTERNAL_75]]","LogonType":"3"}},"host":{"name":"[[HOST_85]]"}}
+{"@timestamp":"2026-10-29T15:12:30.000Z","winlog":{"channel":"Security","event_id":4672,"computer_name":"[[FQDN_INTERNAL_38]]","event_data":{"SubjectUserName":"[[USER_96]]","SubjectDomainName":"[[HOST_68]]","PrivilegeList":"SeDebugPrivilege"}},"host":{"name":"[[HOST_85]]"}}

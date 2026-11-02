@@ -1,0 +1,9 @@
+Sudare
+Copyright 2026 Sudare contributors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes data from MITRE ATT&CK® (crates/sudare-core/data/attack-enterprise.tsv).
+© 2026 The MITRE Corporation. This work is reproduced and distributed with the
+permission of The MITRE Corporation. ATT&CK® is a registered trademark of The MITRE
+Corporation. Terms of use: https://attack.mitre.org/resources/legal-and-branding/terms-of-use/

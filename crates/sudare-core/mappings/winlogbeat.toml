@@ -1,0 +1,22 @@
+# Windows events shipped by Winlogbeat (Elastic), one JSON object per line.
+name = "winlogbeat"
+description = "Windows events exported by Winlogbeat as NDJSON"
+base = "ndjson"
+detect.all_keys = ["winlog.event_id", "winlog.channel"]
+timestamp = { field = "@timestamp" }
+group_key = "winlog.event_id"
+self_fields = ["winlog.computer_name", "host.name"]
+
+[fields]
+"winlog.computer_name" = "hostname"
+"host.name" = "hostname"
+"winlog.event_data.TargetUserName" = "username"
+"winlog.event_data.SubjectUserName" = "username"
+"winlog.event_data.TargetDomainName" = "hostname"
+"winlog.event_data.SubjectDomainName" = "hostname"
+"winlog.event_data.WorkstationName" = "hostname"
+"winlog.event_data.IpAddress" = "ip"
+"winlog.event_data.NewProcessName" = "process"
+"winlog.event_data.ParentProcessName" = "process"
+"user.name" = "username"
+"source.ip" = "ip"

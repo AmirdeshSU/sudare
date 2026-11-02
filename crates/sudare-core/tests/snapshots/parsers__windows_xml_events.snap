@@ -1,0 +1,56 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 2
+    - 2
+  timestamp: "2026-10-29T15:01:02.000Z"
+  group: "4625"
+  error: ~
+  fields:
+    EventID: "4625"
+    TimeCreated: "2026-10-29T15:01:02.000Z"
+    Computer: dc01.corp.example.com
+    Channel: Security
+    Provider: Microsoft-Windows-Security-Auditing
+    EventData.TargetUserName: rkumar
+    EventData.TargetDomainName: CORP
+    EventData.WorkstationName: WS-31
+    EventData.IpAddress: 198.51.100.61
+    EventData.LogonType: "3"
+- lines:
+    - 3
+    - 3
+  timestamp: "2026-10-29T15:03:40.000Z"
+  group: "4624"
+  error: ~
+  fields:
+    EventID: "4624"
+    TimeCreated: "2026-10-29T15:03:40.000Z"
+    Computer: dc01.corp.example.com
+    Channel: Security
+    Provider: Microsoft-Windows-Security-Auditing
+    EventData.TargetUserName: rkumar
+    EventData.TargetDomainName: CORP
+    EventData.WorkstationName: WS-31
+    EventData.IpAddress: 198.51.100.61
+    EventData.LogonType: "10"
+- lines:
+    - 4
+    - 4
+  timestamp: "2026-10-29T15:04:12.000Z"
+  group: "4688"
+  error: ~
+  fields:
+    EventID: "4688"
+    TimeCreated: "2026-10-29T15:04:12.000Z"
+    Computer: ws-31.corp.example.com
+    Channel: Security
+    Provider: Microsoft-Windows-Security-Auditing
+    UserID: S-1-5-21-1004336348-1177238915-682003330-1104
+    EventData.SubjectUserName: rkumar
+    EventData.SubjectDomainName: CORP
+    EventData.NewProcessName: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    EventData.CommandLine: powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkA
+    EventData.ParentProcessName: "C:\\Windows\\explorer.exe"

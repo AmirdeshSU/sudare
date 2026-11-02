@@ -1,0 +1,35 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: ~
+  group: ~
+  error: ~
+  fields:
+    user: jdoe
+    src: 192.0.2.5
+- lines:
+    - 2
+    - 2
+  timestamp: ~
+  group: ~
+  error: EOF while parsing a value at line 1 column 24
+  fields: {}
+- lines:
+    - 3
+    - 3
+  timestamp: ~
+  group: ~
+  error: expected ident at line 1 column 2
+  fields: {}
+- lines:
+    - 4
+    - 4
+  timestamp: ~
+  group: ~
+  error: ~
+  fields:
+    user: asmith

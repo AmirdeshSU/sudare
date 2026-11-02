@@ -1,0 +1,21 @@
+[build-system]
+requires = ["maturin>=1.9,<2"]
+build-backend = "maturin"
+
+[project]
+name = "sudare"
+description = "Reversibly mask sensitive values in security logs before LLM analysis."
+readme = "../../README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+keywords = ["security", "soc", "dfir", "llm", "privacy", "masking", "logs"]
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+    "Intended Audience :: Information Technology",
+]
+dynamic = ["version"]
+
+[tool.maturin]
+module-name = "sudare"

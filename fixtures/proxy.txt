@@ -1,0 +1,3 @@
+2026-10-29 16:30:01 host=proxy01 ALLOW user=nfernandes client=192.0.2.101 url=http://intranet.corp.example.com/hr/payroll.xlsx
+2026-10-29 16:30:09 host=proxy01 ALLOW user=nfernandes client=192.0.2.101 url=https://paste.example.org/raw/8fj2k mac=00:1a:2b:3c:4d:5e
+2026-10-29 16:31:44 host=proxy01 BLOCK user=nfernandes client=192.0.2.101 url=http://198.51.100.250/payload.bin note="matches CVE-2024-3400 exploit pattern"

@@ -1,0 +1,92 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  # Snapshot changes must be reviewed locally, never accepted in CI.
+  INSTA_UPDATE: "no"
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      # Includes the release-blocking leak test. Providers are faked; no keys, no network.
+      - run: cargo test --workspace
+
+  core-has-no-network:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: sudare-core must not depend on a networking crate
+        run: |
+          if cargo tree -p sudare-core -e normal --prefix none \
+              | grep -Eiw '^(reqwest|hyper|hyper-util|h2|tokio|mio|socket2|rustls|native-tls|ureq|curl|isahc|surf|attohttpc)'; then
+            echo "::error::sudare-core pulled in a networking crate"; exit 1
+          fi
+
+  deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - run: cargo build -p sudare-core --no-default-features --target wasm32-unknown-unknown
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: PyO3/maturin-action@v1
+        with:
+          working-directory: crates/sudare-py
+          command: build
+          args: --release --out dist
+      - run: |
+          pip install crates/sudare-py/dist/*.whl pytest
+          pytest -q crates/sudare-py/tests
+
+  fuzz-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - run: cargo install cargo-fuzz --locked
+      - run: |
+          cd fuzz
+          cargo +nightly fuzz run parse -- -max_total_time=60
+          cargo +nightly fuzz run roundtrip -- -max_total_time=60

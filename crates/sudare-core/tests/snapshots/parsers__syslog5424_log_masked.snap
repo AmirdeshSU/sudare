@@ -1,0 +1,7 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: p.input.text()
+---
+<165>1 2026-10-29T14:20:01.003Z [[FQDN_INTERNAL_11]] webapp 4211 AUTH [meta@32473 user="[[USER_82]]" src="[[IP_INTERNAL_82]]"] login failed for [[USER_82]] from 198.51.100.99
+<165>1 2026-10-29T14:20:03.120Z [[FQDN_INTERNAL_11]] webapp 4211 AUTH [meta@32473 user="[[USER_82]]" src="[[IP_INTERNAL_82]]"] login succeeded for [[USER_82]] email=[[EMAIL_54]]
+<165>1 2026-10-29T14:21:00.000Z [[FQDN_INTERNAL_11]] webapp 4211 EXPORT - user [[USER_82]] exported 5000 records to https://files.example.org/upload?id=93ab

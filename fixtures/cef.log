@@ -1,0 +1,3 @@
+CEF:0|ExampleVendor|ExampleFW|1.0|100|Blocked outbound connection|7|src=192.0.2.21 dst=203.0.113.77 spt=50112 dpt=443 suser=CORP\\mlee shost=WS-22 dhost=c2.example.org request=https://c2.example.org/beacon act=blocked
+Oct 29 14:30:12 fw02 CEF:0|ExampleVendor|ExampleFW|1.0|100|Blocked outbound connection|7|src=192.0.2.21 dst=203.0.113.77 suser=CORP\\mlee shost=WS-22 act=blocked
+CEF:0|ExampleVendor|ExampleEDR|2.1|proc-01|Suspicious process|9|shost=WS-22 suser=mlee fname=invoice.pdf.exe filePath=C:\\Users\\mlee\\Downloads\\invoice.pdf.exe fileHash=275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f

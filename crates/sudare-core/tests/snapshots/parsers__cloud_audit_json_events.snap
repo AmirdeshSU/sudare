@@ -1,0 +1,42 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 2
+    - 2
+  timestamp: "2026-10-29T16:00:00Z"
+  group: ConsoleLogin
+  error: ~
+  fields:
+    eventTime: "2026-10-29T16:00:00Z"
+    eventName: ConsoleLogin
+    userIdentity.userName: ops-admin
+    userIdentity.email: ops-admin@corp.example.com
+    sourceIPAddress: 198.51.100.140
+    responseElements.ConsoleLogin: Success
+- lines:
+    - 3
+    - 3
+  timestamp: "2026-10-29T16:05:00Z"
+  group: CreateUser
+  error: ~
+  fields:
+    eventTime: "2026-10-29T16:05:00Z"
+    eventName: CreateUser
+    userIdentity.userName: ops-admin
+    sourceIPAddress: 198.51.100.140
+    requestParameters.userName: backdoor-user
+- lines:
+    - 4
+    - 4
+  timestamp: "2026-10-29T16:05:20Z"
+  group: CreateAccessKey
+  error: ~
+  fields:
+    eventTime: "2026-10-29T16:05:20Z"
+    eventName: CreateAccessKey
+    userIdentity.userName: ops-admin
+    sourceIPAddress: 198.51.100.140
+    responseElements.accessKey.accessKeyId: AKIAEXAMPLEEXAMPLE12
+    responseElements.accessKey.secretAccessKey: wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY

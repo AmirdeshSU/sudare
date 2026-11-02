@@ -1,0 +1,70 @@
+{
+  "_comment": "Ground truth for the leak tests. Every fixture is synthetic. 'sensitive' values must never reach an LLM or threat-intel provider in any mode. 'public' values are IOCs that default mode may send to the LLM and to threat intel; strict mode masks them for the LLM.",
+  "files": {
+    "syslog3164.log": {
+      "parser": "syslog3164",
+      "sensitive": ["fw01", "jdoe", "192.0.2.15", "ws-17.corp.example.com"],
+      "public": ["198.51.100.23", "203.0.113.50", "malware.example.org"]
+    },
+    "syslog5424.log": {
+      "parser": "syslog5424",
+      "sensitive": ["app-02.corp.example.com", "asmith", "192.0.2.44", "asmith@corp.example.com"],
+      "public": ["198.51.100.99", "files.example.org"]
+    },
+    "cef.log": {
+      "parser": "cef",
+      "sensitive": ["192.0.2.21", "mlee", "WS-22", "fw02"],
+      "public": ["203.0.113.77", "c2.example.org", "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f"]
+    },
+    "leef.log": {
+      "parser": "leef",
+      "sensitive": ["192.0.2.80", "dbadmin", "db01", "192.0.2.81", "db02"],
+      "public": ["203.0.113.9", "198.51.100.200"]
+    },
+    "windows.xml": {
+      "parser": "winxml",
+      "sensitive": ["dc01.corp.example.com", "rkumar", "CORP", "WS-31", "ws-31.corp.example.com", "S-1-5-21-1004336348-1177238915-682003330-1104"],
+      "public": ["198.51.100.61"]
+    },
+    "winlogbeat.ndjson": {
+      "parser": "winlogbeat",
+      "sensitive": ["dc01.corp.example.com", "dc01", "svc_backup", "CORP", "192.0.2.66"],
+      "public": []
+    },
+    "cloud-audit.json": {
+      "parser": "json",
+      "sensitive": ["ops-admin", "ops-admin@corp.example.com", "backdoor-user", "AKIAEXAMPLEEXAMPLE12", "wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY"],
+      "public": ["198.51.100.140"]
+    },
+    "proxy.txt": {
+      "parser": "raw",
+      "sensitive": ["proxy01", "nfernandes", "192.0.2.101", "intranet.corp.example.com", "00:1a:2b:3c:4d:5e"],
+      "public": ["198.51.100.250", "paste.example.org"]
+    },
+    "hostile.log": {
+      "parser": "raw",
+      "sensitive": ["web01", "kpatel", "192.0.2.7"],
+      "public": ["203.0.113.200"]
+    },
+    "fortisiem.json": {
+      "parser": "fortisiem",
+      "sensitive": ["dc02.corp.example.com", "hgupta"],
+      "public": ["198.51.100.33"]
+    },
+    "malformed/broken.ndjson": {
+      "parser": "ndjson",
+      "sensitive": ["jdoe", "192.0.2.5"],
+      "public": []
+    },
+    "malformed/truncated.json": {
+      "parser": "json",
+      "sensitive": ["jdoe", "192.0.2.5"],
+      "public": []
+    },
+    "malformed/garbage.cef": {
+      "parser": "cef",
+      "sensitive": ["192.0.2.9"],
+      "public": []
+    }
+  }
+}
