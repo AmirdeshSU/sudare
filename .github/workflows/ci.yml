@@ -90,3 +90,9 @@ jobs:
           cd fuzz
           cargo +nightly fuzz run parse -- -max_total_time=60
           cargo +nightly fuzz run roundtrip -- -max_total_time=60
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f deploy/Dockerfile -t sudare:ci .

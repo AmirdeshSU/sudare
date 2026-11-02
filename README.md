@@ -13,8 +13,8 @@ on your side.
 > visitors from behind one: she could see them, they could not see her, and only she
 > ever raised the blind.
 
-**Status:** phase 2 of 4. The core library, the CLI and the Python package work today.
-The web UI and server (phases 3–4) are not built yet. See [CHANGELOG.md](CHANGELOG.md).
+**Status:** phase 3 of 4. The core library, the CLI, the Python package and the HTTP API
+server work today. The web UI (phase 4) isn't built yet. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quickstart
 
@@ -188,6 +188,76 @@ The model's reply is checked before you see it:
 - **Reputation:** verdicts come only from threat intel, never from the model.
 
 The markdown output escapes HTML and defangs links.
+
+## Server
+
+```sh
+export SUDARE_SECRET_KEY=$(sudare keygen)   # encrypts stored keys and mask maps; keep it safe
+sudare serve                                 # 127.0.0.1:8080, single user
+# sudare: open http://127.0.0.1:8080/#token=…   (printed once; the token sits in the URL fragment, so it never reaches server logs)
+```
+
+Or with Docker. This binds to 127.0.0.1 only and runs a distroless, non-root, read-only container:
+
+```sh
+SUDARE_SECRET_KEY=$(sudare keygen) docker compose -f deploy/docker-compose.yml --profile ollama up -d
+```
+
+**Single-user mode** (default):
+- Binds to 127.0.0.1.
+- You log in with the startup token.
+
+**Multi-user mode** (`SUDARE_MODE=multi`):
+- Accounts use argon2id passwords.
+- The first admin comes from `SUDARE_ADMIN_PASSWORD`.
+- There are two roles, admin and user. Each user sees only their own history and keys.
+
+**Both modes:**
+- **Sessions:** an HttpOnly, SameSite=Strict session cookie, plus a CSRF token required on every state-changing request.
+- **Request checks:** a `Host` allowlist against DNS rebinding, and an `Origin` check.
+- **Lockout:** 5 failed logins in 15 minutes locks that IP and username.
+- **Startup checks:** the server refuses to start with a missing, short or placeholder secret, token or admin password.
+
+**The review step is enforced by the server, not just the UI.**
+1. `POST /api/preview` returns the masked text and its SHA-256 digest.
+2. `POST /api/analyses` to any non-local provider is refused (`428`) unless it carries `confirm_digest` equal to that digest.
+3. Chat follow-ups work the same way through `/api/analyses/{id}/chat/preview`.
+
+Provider base URLs come only from server configuration, so users can't point the server at arbitrary hosts.
+
+**Storage:** SQLite, file mode 0600, `secure_delete` on.
+- **History:**
+  - masked input
+  - unmasked report
+  - mask map and chat, sealed with XChaCha20-Poly1305 and bound to user and analysis
+- **API keys:** stored the same way, per user. They're shown only as `…abcd` and never returned.
+- **Retention:** 30 days by default (`SUDARE_RETENTION_DAYS`, or admin `PUT /api/settings`).
+- **Delete:** removes the input, the result and the map together.
+
+| Variable | Default | |
+|---|---|---|
+| `SUDARE_SECRET_KEY` | required | 64 hex chars (`sudare keygen`) |
+| `SUDARE_BIND` | `127.0.0.1:8080` | |
+| `SUDARE_ALLOWED_HOSTS` | loopback names | required for non-loopback binds |
+| `SUDARE_MODE` | `single` | or `multi` |
+| `SUDARE_TOKEN` | random per start | single-user login token, 32+ chars |
+| `SUDARE_ADMIN_PASSWORD` | | first admin in multi mode, 12+ chars |
+| `SUDARE_COOKIE_SECURE` | `false` | set `true` behind TLS |
+| `SUDARE_RETENTION_DAYS` | `30` | |
+| `SUDARE_POLICY` | built-in | masking policy file |
+| `SUDARE_OLLAMA_URL`, `SUDARE_OPENAI_COMPAT_URL`, `SUDARE_OPENAI_COMPAT_MODEL` | | provider endpoints |
+| `SUDARE_LOCAL_HOSTS` | | hosts that count as local (no confirmation) |
+| `SUDARE_DATA_DIR` | `~/.local/share/sudare` | |
+
+Endpoints:
+- `/api/login`, `/api/logout`, `/api/me`
+- `/api/parsers`, `/api/providers`
+- `/api/preview`
+- `/api/analyses[/{id}[/chat[/preview]]]`
+- `/api/keys[/{name}]`
+- `/api/users[/{id}]`
+- `/api/settings`
+- `/api/health`
 
 ## Python
 

@@ -568,14 +568,21 @@ impl TiRunner {
     /// Keys from SUDARE_VIRUSTOTAL_KEY, SUDARE_ABUSEIPDB_KEY, SUDARE_OTX_KEY,
     /// SUDARE_ABUSECH_KEY (URLhaus + ThreatFox) and SUDARE_GREYNOISE_KEY.
     pub fn from_env() -> Self {
-        let k = ApiKey::from_env;
+        Self::with_keys(|key_name| {
+            ApiKey::from_env(&format!("SUDARE_{}_KEY", key_name.to_ascii_uppercase()))
+        })
+    }
+
+    /// Key names: `virustotal`, `abuseipdb`, `otx`, `abusech` (URLhaus + ThreatFox),
+    /// `greynoise`.
+    pub fn with_keys(key: impl Fn(&str) -> Option<ApiKey>) -> Self {
         Self::new(vec![
-            Box::new(VirusTotal::new(k("SUDARE_VIRUSTOTAL_KEY"))),
-            Box::new(AbuseIpDb::new(k("SUDARE_ABUSEIPDB_KEY"))),
-            Box::new(Otx::new(k("SUDARE_OTX_KEY"))),
-            Box::new(UrlHaus::new(k("SUDARE_ABUSECH_KEY"))),
-            Box::new(ThreatFox::new(k("SUDARE_ABUSECH_KEY"))),
-            Box::new(GreyNoise::new(k("SUDARE_GREYNOISE_KEY"))),
+            Box::new(VirusTotal::new(key("virustotal"))),
+            Box::new(AbuseIpDb::new(key("abuseipdb"))),
+            Box::new(Otx::new(key("otx"))),
+            Box::new(UrlHaus::new(key("abusech"))),
+            Box::new(ThreatFox::new(key("abusech"))),
+            Box::new(GreyNoise::new(key("greynoise"))),
         ])
     }
 
@@ -637,3 +644,6 @@ impl TiRunner {
         out
     }
 }
+
+/// Key names accepted by [`TiRunner::with_keys`].
+pub const TI_KEY_NAMES: &[&str] = &["virustotal", "abuseipdb", "otx", "abusech", "greynoise"];

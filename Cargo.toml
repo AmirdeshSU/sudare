@@ -3,6 +3,7 @@ resolver = "3"
 members = [
     "crates/sudare-core",
     "crates/sudare-egress",
+    "crates/sudare-server",
     "crates/sudare-cli",
     "crates/sudare-py",
 ]
@@ -17,6 +18,7 @@ authors = ["Sudare contributors"]
 [workspace.dependencies]
 sudare-core = { path = "crates/sudare-core", version = "0.1.0" }
 sudare-egress = { path = "crates/sudare-egress", version = "0.1.0" }
+sudare-server = { path = "crates/sudare-server", version = "0.1.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = { version = "1.0.154", features = ["raw_value"] }
 thiserror = "2.0.21"

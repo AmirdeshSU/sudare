@@ -107,6 +107,22 @@ impl Drop for MaskMap {
     }
 }
 
+#[derive(Serialize, serde::Deserialize)]
+pub(crate) struct SealedEntry {
+    token: String,
+    original: String,
+    normalized: String,
+    kind: EntityType,
+    scope: Scope,
+}
+
+impl Drop for SealedEntry {
+    fn drop(&mut self) {
+        self.original.zeroize();
+        self.normalized.zeroize();
+    }
+}
+
 pub struct Unmasked {
     pub text: String,
     /// Token-shaped strings in the text that this map does not know.
@@ -130,6 +146,53 @@ impl MaskMap {
 
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
+    }
+
+    pub(crate) fn salt(&self) -> [u8; 32] {
+        self.salt
+    }
+
+    /// Plain entries for sealing. Only `engine::Prepared::seal` calls this, and it
+    /// encrypts the result straight away.
+    pub(crate) fn export(&self) -> Vec<SealedEntry> {
+        self.entries
+            .iter()
+            .map(|(t, e)| SealedEntry {
+                token: t.clone(),
+                original: e.original.clone(),
+                normalized: e.normalized.clone(),
+                kind: e.kind.clone(),
+                scope: e.scope,
+            })
+            .collect()
+    }
+
+    pub(crate) fn import(salt: [u8; 32], entries: &[SealedEntry]) -> Self {
+        let mut m = Self::new(salt);
+        for e in entries {
+            let Some((pfx, n)) = e
+                .token
+                .strip_prefix("[[")
+                .and_then(|t| t.strip_suffix("]]"))
+                .and_then(|t| t.rsplit_once('_'))
+            else {
+                continue;
+            };
+            let Ok(n) = n.parse::<u32>() else { continue };
+            m.used.entry(pfx.to_string()).or_default().insert(n);
+            m.by_value
+                .insert((pfx.to_string(), e.normalized.clone()), e.token.clone());
+            m.entries.insert(
+                e.token.clone(),
+                MapEntry {
+                    original: e.original.clone(),
+                    normalized: e.normalized.clone(),
+                    kind: e.kind.clone(),
+                    scope: e.scope,
+                },
+            );
+        }
+        m
     }
 
     /// Real value behind a token. For local display only.
@@ -318,14 +381,14 @@ impl std::fmt::Display for MaskedText {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub(crate) struct EventRef {
     pub lines: (u32, u32),
     pub group: Option<String>,
 }
 
 /// The masked log text plus line/event metadata. Holds no real values.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub struct MaskedInput {
     pub(crate) text: String,
     pub(crate) lines: u32,

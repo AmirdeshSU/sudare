@@ -1,6 +1,22 @@
 # Changelog
 
-## Unreleased: phase 2 (core, CLI, Python)
+## Unreleased: phase 3 (server)
+
+### Added
+- `sudare-server` (axum) and `sudare serve` / `sudare keygen`:
+  - single-user token login, or multi-user with argon2id passwords
+  - HttpOnly SameSite=Strict sessions, CSRF tokens, Host allowlist, Origin check
+  - login lockout, and security headers with a strict CSP
+- Server-enforced review: a cloud provider needs the masked preview's digest (`428` otherwise), for analyses and chat alike.
+- Per-user API keys sealed with XChaCha20-Poly1305 and never returned.
+- History: masked input, unmasked report, and sealed mask map plus chat. Delete removes all three. Retention purge runs at startup, hourly and on settings change.
+- `Prepared::seal` / `open` in core: the only way a mask map is ever serialized.
+- `deploy/Dockerfile` (distroless, non-root, 63 MB) and `deploy/docker-compose.yml` (127.0.0.1 only, read-only, optional Ollama profile).
+
+### Changed
+- `evtx` 0.14 → 0.15.1 (RUSTSEC-2026-0431; the affected feature was never enabled here).
+
+## Earlier: phase 2 (core, CLI, Python)
 
 ### Added
 - `sudare-core`:
@@ -25,5 +41,5 @@
   - fuzz targets
 
 ### Not yet
-- Server, web UI and encrypted history (phase 3); browser masking playground (phase 4).
+- Web UI and browser masking playground (phase 4).
 - SIEM connectors (pull alerts / push notes): planned after the server.

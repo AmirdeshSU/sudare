@@ -35,8 +35,10 @@ enum Cmd {
     Mask(MaskArgs),
     /// Analyse a log file with an LLM.
     Analyze(Box<AnalyzeArgs>),
-    /// Web UI and API (arrives in phase 3).
+    /// Run the HTTP API (configured by SUDARE_* environment variables; see README).
     Serve,
+    /// Print a new random SUDARE_SECRET_KEY.
+    Keygen,
 }
 
 #[derive(clap::Args)]
@@ -155,7 +157,23 @@ fn run(cli: Cli) -> Result<(), String> {
                 .map_err(|e| e.to_string())?;
             rt.block_on(analyze(*a, cli.mappings.as_deref()))
         }
-        Cmd::Serve => Err("the server arrives in phase 3; use `sudare analyze` for now".into()),
+        Cmd::Serve => {
+            let cfg = sudare_server::Config::from_env()?;
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?
+                .block_on(sudare_server::serve(cfg))
+        }
+        Cmd::Keygen => {
+            let mut k = [0u8; 32];
+            getrandom::fill(&mut k).map_err(|e| e.to_string())?;
+            println!(
+                "{}",
+                k.iter().map(|b| format!("{b:02x}")).collect::<String>()
+            );
+            Ok(())
+        }
     }
 }
 

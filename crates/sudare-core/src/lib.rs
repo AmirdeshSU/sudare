@@ -20,7 +20,7 @@ pub mod prompt;
 pub mod report;
 pub mod types;
 
-pub use engine::{Engine, Prepared};
+pub use engine::{Engine, Prepared, SealError};
 pub use mask::{IndicatorKind, MaskMap, MaskStats, MaskedInput, MaskedText, PublicIndicator};
 pub use policy::{Action, Mode, Policy};
 pub use prompt::{ChatMessage, ChatTurn, MaskedPrompt, Role};

@@ -1,0 +1,29 @@
+[package]
+name = "sudare-server"
+description = "Sudare HTTP API: auth, encrypted history, preview-confirmed analysis."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+[dependencies]
+sudare-core.workspace = true
+sudare-egress.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+getrandom.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "net", "signal"] }
+axum = "0.8.9"
+rusqlite = { version = "0.41.1", features = ["bundled"] }
+argon2 = "0.6.0"
+chacha20poly1305 = "0.11.0"
+sha2 = "0.11.1"
+subtle = "2.6.1"
+zeroize = "1.9.1"
+url = "2.5.8"
+
+[dev-dependencies]
+tower = { version = "0.5.3", features = ["util"] }
+async-trait.workspace = true
