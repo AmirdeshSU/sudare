@@ -1,0 +1,57 @@
+name: pages
+
+# The in-browser masking playground on GitHub Pages. Static only: no server, nothing
+# a visitor pastes leaves their browser.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen@0.2.130
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - working-directory: web
+        env:
+          VITE_PAGES: "1"
+        run: |
+          npm ci --no-audit --no-fund
+          npm run wasm
+          npx tsc --noEmit
+          npx vite build --base=/sudare/ --outDir dist-pages
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist-pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

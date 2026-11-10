@@ -15,6 +15,10 @@ on your side.
 
 **Status:** all four phases built: the core library, the CLI, the Python package, the
 HTTP API server and the web UI with an in-browser masking playground. Not yet released.
+
+**Try the masking in your browser:** https://amirdeshsu.github.io/sudare/ (runs locally
+in the page; nothing you paste is sent anywhere).
+
 See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quickstart

@@ -8,6 +8,16 @@
   credentials or a token; `https://` required; incident ids must be numeric. Pulled
   events go through the normal preview, masking and confirmation.
 - `/api/me` lists configured connectors.
+- The masking playground on GitHub Pages: https://amirdeshsu.github.io/sudare/
+
+### Fixed
+- Masking: a repeated value was left unmasked when a longer or overlapping masked value
+  matched at the same place but was rejected as glued to the next character (for
+  example `7.BB` inside `7.BB.bbB`). Found by the `roundtrip` fuzz target.
+
+### CI
+- gitleaks runs the pinned CLI over the full history (the action failed on the root commit).
+- `sudare-wasm` declares `sudare-core` by path, for cargo-deny's older cargo.
 
 ## Earlier: phase 4 (web UI)
 

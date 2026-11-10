@@ -51,9 +51,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # The CLI over the whole history: gitleaks-action scans `<first>^..<last>`, which
+      # fails when the push contains the root commit.
+      - name: gitleaks (full history)
+        run: |
+          curl -sSfL -o gl.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          echo "9991e0b2903da4c8f6122b5c3186448b927a5da4deef1fe45271c3793f4ee29c  gl.tgz" | sha256sum -c -
+          tar xzf gl.tgz gitleaks
+          ./gitleaks git . --redact --no-banner -v
 
   wasm:
     runs-on: ubuntu-latest
