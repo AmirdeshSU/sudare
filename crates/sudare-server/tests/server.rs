@@ -79,6 +79,9 @@ impl Http for Recorder {
             json!({ "model": "m", "message": { "content": content } })
         } else if url.contains("chat/completions") {
             json!({ "model": "m", "choices": [{ "message": { "content": content } }] })
+        } else if url.ends_with("triggeringEvents?incidentId=42") {
+            json!({ "data": [{ "eventType": "Win-Security-4625", "receiveTime": 1793232000000u64,
+                "rawMessage": "4625 failed logon user=hgupta src=198.51.100.33" }], "result": { "code": 0 } })
         } else {
             return Ok(EgressResponse {
                 status: 404,
@@ -589,4 +592,76 @@ async fn retention_purges_old_analyses() {
     assert_eq!(c.state.purge(), 1);
     let (_, list) = c.call("GET", "/api/analyses", None).await;
     assert!(list.as_array().unwrap().is_empty());
+}
+
+#[tokio::test]
+async fn fortisiem_pull_feeds_the_preview() {
+    let mut off = Client::new(config(&[]));
+    off.login(json!({ "token": TOKEN })).await;
+    let (_, me) = off.call("GET", "/api/me", None).await;
+    assert_eq!(me["connectors"], json!([]));
+    let (status, _) = off
+        .call(
+            "POST",
+            "/api/pull/fortisiem",
+            Some(json!({ "incident_id": "42" })),
+        )
+        .await;
+    assert_eq!(status, StatusCode::NOT_FOUND);
+
+    let mut c = Client::new(config(&[
+        ("SUDARE_FORTISIEM_URL", "https://siem.example.com"),
+        ("SUDARE_FORTISIEM_TOKEN", "siem-token-1"),
+    ]));
+    let (status, _) = c
+        .call(
+            "POST",
+            "/api/pull/fortisiem",
+            Some(json!({ "incident_id": "42" })),
+        )
+        .await;
+    assert_eq!(status, StatusCode::UNAUTHORIZED, "needs a session");
+    c.login(json!({ "token": TOKEN })).await;
+    let (_, me) = c.call("GET", "/api/me", None).await;
+    assert_eq!(me["connectors"], json!(["fortisiem"]));
+
+    let (status, v) = c
+        .call(
+            "POST",
+            "/api/pull/fortisiem",
+            Some(json!({ "incident_id": "4&x=1" })),
+        )
+        .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST, "{v}");
+    let (status, v) = c
+        .call(
+            "POST",
+            "/api/pull/fortisiem",
+            Some(json!({ "incident_id": "7" })),
+        )
+        .await;
+    assert_eq!(status, StatusCode::BAD_GATEWAY, "{v}");
+
+    let (status, pulled) = c
+        .call(
+            "POST",
+            "/api/pull/fortisiem",
+            Some(json!({ "incident_id": "42" })),
+        )
+        .await;
+    assert_eq!(status, StatusCode::OK, "{pulled}");
+    assert_eq!(pulled["parser"], "fortisiem");
+    let (status, preview) = c
+        .call(
+            "POST",
+            "/api/preview",
+            Some(json!({ "text": pulled["text"] })),
+        )
+        .await;
+    assert_eq!(status, StatusCode::OK, "{preview}");
+    let masked = preview["masked"].as_str().unwrap();
+    assert!(masked.contains("2026-10-29T00:00:00Z") && !masked.contains("hgupta"));
+    let sent = c.http.bodies();
+    assert!(sent.contains("bearer siem-token-1") && sent.contains("incidentid=42"));
+    assert!(!sent.contains("incidentid=7&") && !sent.contains("x=1"));
 }

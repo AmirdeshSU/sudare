@@ -268,7 +268,44 @@ pub async fn me(State(s): State<AppState>, session: Session) -> Json<Value> {
     } else {
         "multi"
     };
-    Json(json!({ "user": session.user, "mode": mode }))
+    let connectors: Vec<&str> = s.cfg.fortisiem.iter().map(|_| "fortisiem").collect();
+    Json(json!({ "user": session.user, "mode": mode, "connectors": connectors }))
+}
+
+#[derive(Deserialize)]
+pub struct PullReq {
+    incident_id: String,
+}
+
+/// Fetch an incident's triggering events. Returns unmasked text for the preview step;
+/// nothing is stored or sent to a model here.
+pub async fn pull_fortisiem(
+    State(s): State<AppState>,
+    _: Session,
+    Json(r): Json<PullReq>,
+) -> ApiResult<Json<Value>> {
+    let f = s.cfg.fortisiem.as_ref().ok_or_else(|| {
+        ApiError::new(
+            404,
+            "not_configured",
+            "FortiSIEM is not configured on this server",
+        )
+    })?;
+    let text = f
+        .triggering_events(s.http.as_ref(), &r.incident_id)
+        .await
+        .map_err(|e| match e {
+            sudare_egress::siem::SiemError::Config(m) => ApiError::new(400, "bad_request", m),
+            other => ApiError::new(502, "siem_failed", other.to_string()),
+        })?;
+    if text.len() > MAX_INPUT_BYTES {
+        return Err(ApiError::new(
+            413,
+            "too_large",
+            "incident events are over 16 MiB",
+        ));
+    }
+    Ok(Json(json!({ "text": text, "parser": "fortisiem" })))
 }
 
 pub async fn parsers(State(s): State<AppState>, _: Session) -> Json<Value> {

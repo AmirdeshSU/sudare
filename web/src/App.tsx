@@ -67,7 +67,7 @@ export function App() {
   else if (page === "history") body = <History />;
   else if (page === "settings") body = <Settings me={ctx.me} />;
   else if (page === "a" && arg) body = <Report key={arg} id={arg} providers={ctx.providers} />;
-  else body = <Analyze parsers={ctx.parsers} providers={ctx.providers} />;
+  else body = <Analyze parsers={ctx.parsers} providers={ctx.providers} connectors={ctx.me.connectors} />;
 
   const link = (href: string, label: string, active: boolean) => (
     <a href={href} aria-current={active ? "page" : undefined}>

@@ -66,6 +66,8 @@ flowchart LR
   internal hostnames, usernames and emails are never eligible: the code that calls
   providers only accepts a `PublicIndicator`, and that type can only be built from a
   public value that contains nothing masked.
+- **Your SIEM**, if you configure a connector, receives its credentials and the incident
+  id you ask for. Connectors only read; they never write back.
 - **Nothing else.** There is no telemetry and no update check.
 
 The mask map (token → real value) stays in memory, is zeroed when dropped, and is
@@ -127,6 +129,23 @@ is sent anywhere.
 New JSON-shaped formats need no Rust: they're [TOML mappings](CONTRIBUTING.md#add-a-parser).
 The FortiSIEM mapping covers the documented fields of its public REST API. Seceon is a
 [stub](docs/parsers/seceon.md) because its export layout isn't publicly documented.
+
+## SIEM connectors
+
+Pull only: fetch an incident's events, then review and analyse them like any other input.
+
+**FortiSIEM** (public REST API, `triggeringEvents`):
+
+```sh
+export SUDARE_FORTISIEM_URL=https://fortisiem.example.com
+export SUDARE_FORTISIEM_CLIENT_ID=…  SUDARE_FORTISIEM_CLIENT_SECRET=…   # or SUDARE_FORTISIEM_TOKEN=…
+sudare pull fortisiem 12345 -o incident.json   # unmasked; keep it local
+sudare analyze incident.json
+```
+
+With the same variables set, `sudare serve` shows a "FortiSIEM incident" box on the
+analysis page. The URL must be `https://` (plain `http://` only to loopback). The
+server's connector is shared by all users. Elastic, Splunk and Wazuh are planned.
 
 ## Providers
 
@@ -258,12 +277,13 @@ Provider base URLs come only from server configuration, so users can't point the
 | `SUDARE_POLICY` | built-in | masking policy file |
 | `SUDARE_OLLAMA_URL`, `SUDARE_OPENAI_COMPAT_URL`, `SUDARE_OPENAI_COMPAT_MODEL` | | provider endpoints |
 | `SUDARE_LOCAL_HOSTS` | | hosts that count as local (no confirmation) |
+| `SUDARE_FORTISIEM_URL`, `SUDARE_FORTISIEM_CLIENT_ID`, `SUDARE_FORTISIEM_CLIENT_SECRET`, `SUDARE_FORTISIEM_TOKEN` | | [FortiSIEM connector](#siem-connectors) |
 | `SUDARE_DATA_DIR` | `~/.local/share/sudare` | |
 
 Endpoints:
 - `/api/login`, `/api/logout`, `/api/me`
 - `/api/parsers`, `/api/providers`
-- `/api/preview`
+- `/api/preview`, `/api/pull/fortisiem`
 - `/api/analyses[/{id}[/chat[/preview]]]`
 - `/api/keys[/{name}]`
 - `/api/users[/{id}]`

@@ -200,6 +200,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/parsers", get(api::parsers))
         .route("/api/providers", get(api::providers))
         .route("/api/preview", post(api::preview))
+        .route("/api/pull/fortisiem", post(api::pull_fortisiem))
         .route("/api/analyses", get(api::list).post(api::analyze))
         .route(
             "/api/analyses/{id}",

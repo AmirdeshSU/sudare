@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased: phase 4 (web UI)
+## Unreleased: SIEM connectors
+
+### Added
+- FortiSIEM connector, pull only: `sudare pull fortisiem <incident>` and
+  `POST /api/pull/fortisiem`, with a "FortiSIEM incident" box in the UI. OAuth client
+  credentials or a token; `https://` required; incident ids must be numeric. Pulled
+  events go through the normal preview, masking and confirmation.
+- `/api/me` lists configured connectors.
+
+## Earlier: phase 4 (web UI)
 
 ### Added
 - Web UI (React, Vite, TypeScript), embedded in the binary with `rust-embed`:
@@ -63,4 +72,4 @@
   - fuzz targets
 
 ### Not yet
-- SIEM connectors (pull alerts / push notes): planned after the server.
+- SIEM connectors (pull alerts / push notes): planned after the server. FortiSIEM pull has since landed; Elastic, Splunk, Wazuh and push are still to come.

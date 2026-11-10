@@ -35,6 +35,8 @@ enum Cmd {
     Mask(MaskArgs),
     /// Analyse a log file with an LLM.
     Analyze(Box<AnalyzeArgs>),
+    /// Fetch an incident's events from a SIEM (read-only), for `sudare mask` / `analyze`.
+    Pull(PullArgs),
     /// Run the HTTP API (configured by SUDARE_* environment variables; see README).
     Serve,
     /// Print a new random SUDARE_SECRET_KEY.
@@ -53,6 +55,23 @@ struct Common {
     /// Use this parser instead of auto-detecting one.
     #[arg(long)]
     parser: Option<String>,
+}
+
+#[derive(clap::Args)]
+struct PullArgs {
+    #[arg(value_enum)]
+    siem: SiemArg,
+    /// Incident ID.
+    incident: String,
+    /// Write to this file instead of stdout. The file holds unmasked log data.
+    #[arg(short, long)]
+    out: Option<PathBuf>,
+}
+
+/// Configured by SUDARE_FORTISIEM_* environment variables (see README).
+#[derive(Clone, Copy, ValueEnum)]
+enum SiemArg {
+    Fortisiem,
 }
 
 #[derive(clap::Args)]
@@ -157,6 +176,11 @@ fn run(cli: Cli) -> Result<(), String> {
                 .map_err(|e| e.to_string())?;
             rt.block_on(analyze(*a, cli.mappings.as_deref()))
         }
+        Cmd::Pull(p) => tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .map_err(|e| e.to_string())?
+            .block_on(pull(p)),
         Cmd::Serve => {
             let cfg = sudare_server::Config::from_env()?;
             tokio::runtime::Builder::new_multi_thread()
@@ -175,6 +199,31 @@ fn run(cli: Cli) -> Result<(), String> {
             Ok(())
         }
     }
+}
+
+async fn pull(p: PullArgs) -> Result<(), String> {
+    let SiemArg::Fortisiem = p.siem;
+    let f = sudare_egress::siem::FortiSiem::from_lookup(|k| {
+        std::env::var(k).ok().filter(|v| !v.trim().is_empty())
+    })
+    .map_err(|e| e.to_string())?
+    .ok_or("FortiSIEM is not configured: set SUDARE_FORTISIEM_URL (see README)")?;
+    let http = ReqwestHttp::new().map_err(|e| e.to_string())?;
+    let json = f
+        .triggering_events(&http, &p.incident)
+        .await
+        .map_err(|e| e.to_string())?;
+    match p.out {
+        Some(path) => {
+            std::fs::write(&path, json).map_err(|e| format!("{}: {e}", path.display()))?;
+            eprintln!(
+                "wrote {} (unmasked). Next: sudare analyze {0}",
+                path.display()
+            );
+        }
+        None => println!("{json}"),
+    }
+    Ok(())
 }
 
 fn engine(policy: Option<&Path>, mode: ModeArg, mappings: Option<&Path>) -> Result<Engine, String> {

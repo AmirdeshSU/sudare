@@ -1,7 +1,7 @@
 import { cookie } from "./text.ts";
 
 export type User = { id: number; username: string; role: "admin" | "user" };
-export type Me = { user: User; mode: "single" | "multi" };
+export type Me = { user: User; mode: "single" | "multi"; connectors: string[] };
 export type Provider =
   | { name: string; ready: true; local: boolean; model: string; base_url: string }
   | { name: string; ready: false; reason: string };

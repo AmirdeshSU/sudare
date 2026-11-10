@@ -4,8 +4,13 @@ import { CloudConfirm, Diff, ErrorBox, Masked, ProviderPicker, StatChips, needsC
 
 const MAX_BYTES = 16 * 1024 * 1024;
 
-export function Analyze(props: { parsers: { name: string; description: string }[]; providers: Provider[] }) {
+export function Analyze(props: {
+  parsers: { name: string; description: string }[];
+  providers: Provider[];
+  connectors: string[];
+}) {
   const [text, setText] = useState("");
+  const [incident, setIncident] = useState("");
   const [parser, setParser] = useState("");
   const [strict, setStrict] = useState(false);
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -22,6 +27,20 @@ export function Analyze(props: { parsers: { name: string; description: string }[
     if (!f) return;
     if (f.size > MAX_BYTES) return setError("File is over 16 MiB.");
     setText(await f.text());
+  }
+
+  async function pull() {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await api<{ text: string; parser: string }>("/pull/fortisiem", "POST", { incident_id: incident });
+      setText(r.text);
+      setParser(r.parser);
+    } catch (e) {
+      setError(errorText(e));
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function doPreview() {
@@ -73,6 +92,17 @@ export function Analyze(props: { parsers: { name: string; description: string }[
           spellCheck={false}
           aria-label="Logs"
         />
+        {props.connectors.includes("fortisiem") && (
+          <div className="row">
+            <label>
+              FortiSIEM incident
+              <input value={incident} onChange={(e) => setIncident(e.target.value)} inputMode="numeric" placeholder="ID" />
+            </label>
+            <button disabled={busy || !/^\d+$/.test(incident.trim())} onClick={() => void pull()}>
+              Pull events
+            </button>
+          </div>
+        )}
         <div className="row">
           <label>
             File

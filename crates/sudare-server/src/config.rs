@@ -31,6 +31,8 @@ pub struct Config {
     pub compat_model: Option<String>,
     pub local_hosts: Vec<String>,
     pub num_ctx: u32,
+    /// Read-only FortiSIEM connector (SUDARE_FORTISIEM_*), server-wide.
+    pub fortisiem: Option<sudare_egress::siem::FortiSiem>,
 }
 
 const PLACEHOLDERS: &[&str] = &[
@@ -199,6 +201,8 @@ impl Config {
                 })
                 .unwrap_or_default(),
             num_ctx,
+            fortisiem: sudare_egress::siem::FortiSiem::from_lookup(&get)
+                .map_err(|e| e.to_string())?,
         })
     }
 }
