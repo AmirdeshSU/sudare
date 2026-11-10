@@ -20,6 +20,7 @@
 
 ### Fixed
 - Usernames in sshd/PAM phrasing ("Failed password for jdoe", "Invalid user x", "session opened for user x") were missed when they appeared nowhere else in the input.
+- Entity verification dropped real paths from CEF, LEEF and JSON input, which escape backslashes, when the model quoted them unescaped. Found in a live Gemini run.
 
 ## Earlier: phase 3 (server)
 
