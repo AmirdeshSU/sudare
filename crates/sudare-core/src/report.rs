@@ -317,14 +317,20 @@ pub fn validate(a: &mut ModelAnalysis, input: &MaskedInput, map: &MaskMap) -> Ve
     a.attack_techniques = kept;
 
     let text = input.text().to_lowercase();
+    // CEF, LEEF and JSON escape backslashes; models quote paths unescaped.
+    let unescaped = text.replace("\\\\", "\\");
+    let seen = |r: &str| {
+        let r = r.to_lowercase();
+        !r.is_empty() && (text.contains(&r) || unescaped.contains(&r))
+    };
     a.entities.retain(|e| {
         let r = e.reference.trim();
         let ok = if r.contains('[')
             || r.contains('_') && r.chars().any(|c| c.is_ascii_digit()) && r.to_uppercase() == r
         {
-            map.canonical_token(r).is_some() || (!r.is_empty() && text.contains(&r.to_lowercase()))
+            map.canonical_token(r).is_some() || seen(r)
         } else {
-            !r.is_empty() && text.contains(&r.to_lowercase())
+            seen(r)
         };
         if !ok {
             w.push(Warning::new(
@@ -602,5 +608,22 @@ mod tests {
             "&lt;script&gt;x&lt;/script&gt; hxxps://a.example.org"
         );
         assert_eq!(fence("a ``` b"), "````");
+    }
+
+    #[test]
+    fn entity_check_accepts_unescaped_backslashes() {
+        let engine = crate::Engine::new(crate::Policy::default()).unwrap();
+        let p = engine
+            .prepare(
+                r"CEF:0|V|P|1|1|x|5|fname=C:\\Users\\Public\\invoice.pdf.exe",
+                None,
+                [7; 32],
+            )
+            .unwrap();
+        let raw = r#"{"summary":"s","verdict":"benign","severity":{"level":"low","rationale":"r"},"confidence":{"score":0.5,"would_change_it":"x"},"recommended_actions":{},"entities":[{"ref":"C:\\Users\\Public\\invoice.pdf.exe","role":"file"},{"ref":"C:\\nope.exe","role":"file"}]}"#;
+        let mut a = parse_model_output(raw).unwrap();
+        let w = validate(&mut a, &p.input, &p.map);
+        assert_eq!(a.entities.len(), 1, "{w:?}");
+        assert_eq!(w.len(), 1);
     }
 }
