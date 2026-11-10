@@ -23,6 +23,7 @@ sha2 = "0.11.1"
 subtle = "2.6.1"
 zeroize = "1.9.1"
 url = "2.5.8"
+rust-embed = { version = "8.13.0", features = ["mime-guess"] }
 
 [dev-dependencies]
 tower = { version = "0.5.3", features = ["util"] }

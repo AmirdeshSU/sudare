@@ -103,3 +103,5 @@ Implement `Enricher` in `crates/sudare-egress/src/ti.rs`:
 - Property tests (`proptest`): masking hides generated values and unmasking restores
   the input exactly; no input or parser panics.
 - `cargo fuzz`: `parse` and `roundtrip` targets (nightly), smoke-run in CI.
+- `web/`: `npm run lint` (which forbids `dangerouslySetInnerHTML`: model output is
+  rendered as text, never HTML), `npm run build` (includes `tsc`) and `npm test`.

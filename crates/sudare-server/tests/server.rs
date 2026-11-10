@@ -280,6 +280,35 @@ async fn host_allowlist_origin_check_and_headers() {
             .contains("default-src 'none'")
     );
 
+    // The UI page: strict CSP (WebAssembly allowed, no inline or eval script).
+    let (status, headers, _) = c.raw("GET", "/", None, &[]).await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(
+        headers["content-type"]
+            .to_str()
+            .unwrap()
+            .starts_with("text/html")
+    );
+    let csp = headers["content-security-policy"].to_str().unwrap();
+    assert!(
+        csp.contains("script-src 'self' 'wasm-unsafe-eval';"),
+        "{csp}"
+    );
+    assert!(
+        !csp.contains("unsafe-inline") && !csp.contains("'unsafe-eval'"),
+        "{csp}"
+    );
+    for (method, path) in [
+        ("GET", "/api/nope"),
+        ("POST", "/"),
+        ("GET", "/no-such-file.js"),
+    ] {
+        let (status, _, _) = c.raw(method, path, None, &[]).await;
+        assert_eq!(status, StatusCode::NOT_FOUND, "{method} {path}");
+    }
+    let (_, _, body) = c.raw("GET", "/api/health", None, &[]).await;
+    assert_eq!(body["mode"], "single");
+
     let (status, _, _) = c
         .raw(
             "POST",

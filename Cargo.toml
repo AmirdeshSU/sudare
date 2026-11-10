@@ -6,6 +6,7 @@ members = [
     "crates/sudare-server",
     "crates/sudare-cli",
     "crates/sudare-py",
+    "crates/sudare-wasm",
 ]
 
 [workspace.package]

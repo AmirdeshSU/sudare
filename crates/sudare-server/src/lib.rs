@@ -193,7 +193,6 @@ impl IntoResponse for ApiError {
 
 pub fn router(state: AppState) -> Router {
     Router::new()
-        .route("/", get(api::index))
         .route("/api/health", get(api::health))
         .route("/api/login", post(api::login))
         .route("/api/logout", post(api::logout))
@@ -219,14 +218,14 @@ pub fn router(state: AppState) -> Router {
             "/api/settings",
             get(api::get_settings).put(api::put_settings),
         )
-        .fallback(api::not_found)
+        .fallback(api::fallback)
         .layer(DefaultBodyLimit::max(MAX_INPUT_BYTES + 64 * 1024))
         .layer(from_fn_with_state(state.clone(), guard))
         .with_state(state)
 }
 
 const API_CSP: &str = "default-src 'none'; frame-ancestors 'none'";
-const PAGE_CSP: &str = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+const PAGE_CSP: &str = "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 
 /// Host allowlist (DNS rebinding), Origin check on state-changing requests, client
 /// IP for throttling, and security headers on every response.

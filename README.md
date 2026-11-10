@@ -13,8 +13,9 @@ on your side.
 > visitors from behind one: she could see them, they could not see her, and only she
 > ever raised the blind.
 
-**Status:** phase 3 of 4. The core library, the CLI, the Python package and the HTTP API
-server work today. The web UI (phase 4) isn't built yet. See [CHANGELOG.md](CHANGELOG.md).
+**Status:** all four phases built: the core library, the CLI, the Python package, the
+HTTP API server and the web UI with an in-browser masking playground. Not yet released.
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quickstart
 
@@ -197,6 +198,16 @@ sudare serve                                 # 127.0.0.1:8080, single user
 # sudare: open http://127.0.0.1:8080/#token=…   (printed once; the token sits in the URL fragment, so it never reaches server logs)
 ```
 
+Open the link and you get the web UI:
+
+- **New analysis:** paste logs or open a file, then review a side-by-side diff of the original and masked lines before anything is sent. For a cloud provider you tick an explicit confirmation naming the provider and its URL.
+- **Report:** verdict, severity, timeline, ATT&CK techniques, actions and the indicators Sudare found, with the real values restored. Model text is rendered as plain text (never HTML) and links are defanged.
+- **Follow-up chat:** questions are masked with the same map; cloud questions are previewed and confirmed the same way.
+- **History** and **Settings** (API keys, retention, users).
+- **Playground** (`#/playground`, no login): the masking engine compiled to WebAssembly, running entirely in the browser tab.
+
+The UI is compiled into the binary. The page CSP allows only same-origin scripts plus WebAssembly (`'wasm-unsafe-eval'`): no inline script, no `eval`, no third-party origin.
+
 Or with Docker. This binds to 127.0.0.1 only and runs a distroless, non-root, read-only container:
 
 ```sh
@@ -303,7 +314,16 @@ cargo test --workspace            # unit, snapshot, property and leak tests
 cargo clippy --workspace --all-targets -- -D warnings
 cargo deny check                  # licences (no copyleft) and advisories
 cargo +nightly fuzz run parse     # fuzzing, see fuzz/
+
+# Web UI (Node 24, wasm-bindgen-cli 0.2.130, rustup target wasm32-unknown-unknown)
+cd web && npm ci
+npm run wasm                      # masking engine to WebAssembly
+npm run lint && npm run build && npm test
+npm run watch                     # with `cargo run -p sudare-cli -- serve`: debug builds read web/dist from disk
 ```
+
+Release builds embed `web/dist`; build the UI before `cargo build --release`, or the
+server serves a short "no web UI in this build" page.
 
 Every fixture is synthetic: documentation IP ranges (192.0.2.0/24, 198.51.100.0/24,
 203.0.113.0/24, 2001:db8::/32), `example.com`/`example.org` and invented names.

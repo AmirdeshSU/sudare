@@ -6,7 +6,7 @@ use crate::secrets::{self, constant_time_eq, random_token, sha256_hex};
 use crate::{ApiError, AppState, ClientIp, MAX_INPUT_BYTES, Pending, UserMode};
 use axum::Json;
 use axum::extract::{Path, State};
-use axum::http::header;
+use axum::http::{Method, Uri, header};
 use axum::response::{AppendHeaders, Html, IntoResponse, Response};
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -130,19 +130,57 @@ fn require_confirmation(
     .with(json!({ "digest": digest, "provider": provider.name(), "base_url": provider.base_url().as_str() })))
 }
 
-pub async fn index() -> Html<&'static str> {
-    Html(
-        "<!doctype html><meta charset=utf-8><title>Sudare</title>\
-         <p>Sudare API is running. The web UI arrives in phase 4; use the CLI or the JSON API under <code>/api</code>.</p>",
-    )
+/// The web UI (`web/dist`). Release builds embed it; debug builds read it from disk,
+/// so `npm run watch` in `web/` is enough during development.
+#[derive(rust_embed::Embed)]
+#[folder = "../../web/dist"]
+#[allow_missing = true]
+struct Ui;
+
+const NO_UI: &str = "<!doctype html><meta charset=utf-8><title>Sudare</title>\
+    <p>Sudare API is running, but this build has no web UI. Run <code>npm ci &amp;&amp; npm run wasm &amp;&amp; npm run build</code> in <code>web/</code> and rebuild, or use the CLI.</p>";
+
+/// Static UI files for GET outside `/api`; JSON 404 for everything else.
+pub async fn fallback(method: Method, uri: Uri) -> Response {
+    let path = uri.path().trim_start_matches('/');
+    if !matches!(method, Method::GET | Method::HEAD) || path.starts_with("api/") {
+        return not_found().await.into_response();
+    }
+    let path = if path.is_empty() { "index.html" } else { path };
+    match Ui::get(path) {
+        Some(f) => {
+            // Vite fingerprints everything under assets/.
+            let cache = if path.starts_with("assets/") {
+                "public, max-age=31536000, immutable"
+            } else {
+                "no-cache"
+            };
+            (
+                [
+                    (header::CONTENT_TYPE, f.metadata.mimetype().to_string()),
+                    (header::CACHE_CONTROL, cache.to_string()),
+                ],
+                f.data,
+            )
+                .into_response()
+        }
+        None if path == "index.html" => Html(NO_UI).into_response(),
+        None => not_found().await.into_response(),
+    }
 }
 
 pub async fn not_found() -> ApiError {
     ApiError::new(404, "not_found", "no such endpoint")
 }
 
-pub async fn health() -> Json<Value> {
-    Json(json!({ "status": "ok", "version": env!("CARGO_PKG_VERSION") }))
+/// Public: the login screen needs the mode before there is a session.
+pub async fn health(State(s): State<AppState>) -> Json<Value> {
+    let mode = if s.cfg.mode == UserMode::Single {
+        "single"
+    } else {
+        "multi"
+    };
+    Json(json!({ "status": "ok", "version": env!("CARGO_PKG_VERSION"), "mode": mode }))
 }
 
 #[derive(Deserialize)]

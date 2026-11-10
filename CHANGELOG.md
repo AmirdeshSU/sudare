@@ -1,6 +1,27 @@
 # Changelog
 
-## Unreleased: phase 3 (server)
+## Unreleased: phase 4 (web UI)
+
+### Added
+- Web UI (React, Vite, TypeScript), embedded in the binary with `rust-embed`:
+  - paste or upload, then a line-by-line diff of original and masked text before any send
+  - an explicit confirmation naming the provider and URL for cloud providers, for analyses and chat
+  - report, follow-up chat, history, API keys, retention and user management
+  - model output rendered as text nodes only, links defanged; lint forbids `dangerouslySetInnerHTML`
+- `sudare-wasm` and the `#/playground` page: masking in the browser, no login, nothing sent.
+- `/api/health` reports the login mode.
+- CI: a `web` job (wasm build, eslint, tsc, vite build, tests). The Docker image builds wasm, the UI and the binary.
+
+### Changed
+- Page CSP adds `'wasm-unsafe-eval'` for the playground. Inline script and `eval` stay blocked.
+
+### Licences
+- Vite 8 needs `lightningcss` (MPL-2.0) at build time. Accepted: it is a build tool only, and none of its code ships in the UI bundle or the binary.
+
+### Fixed
+- Usernames in sshd/PAM phrasing ("Failed password for jdoe", "Invalid user x", "session opened for user x") were missed when they appeared nowhere else in the input.
+
+## Earlier: phase 3 (server)
 
 ### Added
 - `sudare-server` (axum) and `sudare serve` / `sudare keygen`:
@@ -41,5 +62,4 @@
   - fuzz targets
 
 ### Not yet
-- Web UI and browser masking playground (phase 4).
 - SIEM connectors (pull alerts / push notes): planned after the server.

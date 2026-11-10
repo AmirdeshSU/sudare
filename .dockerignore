@@ -2,3 +2,6 @@ target
 fuzz/target
 .git
 **/__pycache__
+web/node_modules
+web/dist
+web/src/wasm

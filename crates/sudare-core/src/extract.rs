@@ -59,6 +59,12 @@ re!(
     r"(?i)(?:\\{1,2}Users\\{1,2}|/home/|/Users/)([A-Za-z0-9._$-]{1,64})"
 );
 re!(PROCESS, r"(?i)\b[\w-]{1,64}\.exe\b");
+// sshd / PAM / su phrasing: "Failed password for [invalid user] jdoe", "Invalid user x",
+// "session opened for user x".
+re!(
+    AUTH_USER,
+    r"(?i)\b(?:(?:password|publickey|keyboard-interactive(?:/pam)?|hostbased|gssapi-with-mic|none) for(?: invalid user)?|(?:invalid|illegal) user|for user|by user)\s+([A-Za-z0-9][A-Za-z0-9._$-]{0,63})"
+);
 re!(
     SID,
     r"\bS-1-5-21-\d{1,10}-\d{1,10}-\d{1,10}(?:-\d{1,10})?\b"
@@ -492,6 +498,13 @@ impl Extractor for RegexExtractor {
                 push(out, Username, u.start(), u.end());
             }
         }
+        for c in AUTH_USER.captures_iter(text) {
+            let Some(u) = c.get(1) else { continue };
+            let name = u.as_str().trim_end_matches('.');
+            if !name.is_empty() && !name.eq_ignore_ascii_case("from") {
+                push(out, Username, u.start(), u.start() + name.len());
+            }
+        }
         for m in PROCESS.find_iter(text) {
             push(out, Process, m.start(), m.end());
         }
@@ -695,6 +708,19 @@ mod tests {
         );
         assert!(!v.iter().any(|(_, s)| s.contains("schemas.example.com")));
         assert!(has(&v, EntityType::Process, "cmd.exe"));
+    }
+
+    #[test]
+    fn auth_phrases_name_the_user() {
+        let v = kinds(
+            "sshd[1]: Failed password for invalid user admin from 10.1.2.3 port 22\n\
+             sshd[1]: Accepted publickey for jdoe from 10.1.2.3\n\
+             su: pam_unix(su:session): session opened for user root(uid=0) by bob.",
+        );
+        for u in ["admin", "jdoe", "root"] {
+            assert!(has(&v, EntityType::Username, u), "{u}: {v:?}");
+        }
+        assert!(!has(&v, EntityType::Username, "invalid"));
     }
 
     #[test]
