@@ -6,7 +6,7 @@ type Wasm = typeof import("../wasm/sudare_wasm.js");
 type Decision = { entity: { value: string; kind: string | Record<string, string>; scope: string }; action: string; token: string | null };
 type Result = { masked: string; parser: string; lines: number; events: number; stats: Stats; public_indicators: number; decisions: Decision[] };
 
-const SAMPLE = `<34>Oct 29 14:11:40 fw01 sshd[2211]: Failed password for jdoe from 198.51.100.23 port 51122 ssh2
+export const SAMPLE = `<34>Oct 29 14:11:40 fw01 sshd[2211]: Failed password for jdoe from 198.51.100.23 port 51122 ssh2
 <38>Oct 29 14:12:05 fw01 sshd[2211]: Accepted password for jdoe from 198.51.100.23 port 51130 ssh2
 <13>Oct 29 14:13:00 ws-17.corp.example.com proxy: user=jdoe src=10.20.30.40 GET https://malware.example.org/payload.bin`;
 

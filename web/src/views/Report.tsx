@@ -5,7 +5,7 @@ import { Badge, CloudConfirm, ErrorBox, Masked, ProviderPicker, T, needsConfirm 
 const lines = (ls: number[]) => ls.map((l) => `L${l}`).join(", ");
 const attackUrl = (id: string) => `https://attack.mitre.org/techniques/${id.replace(".", "/")}/`;
 
-function Body({ r }: { r: R }) {
+export function ReportBody({ r }: { r: R }) {
   const a = r.analysis;
   return (
     <>
@@ -327,7 +327,7 @@ export function Report({ id, providers }: { id: string; providers: Provider[] })
         {new Date(data.created_at * 1000).toLocaleString()} · {m.provider} {m.model} · {m.mode} mode · {m.parser} · {m.lines}{" "}
         lines
       </p>
-      <Body r={data.report} />
+      <ReportBody r={data.report} />
       <details>
         <summary>Masked input as sent</summary>
         <pre className="masked">

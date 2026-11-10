@@ -1,7 +1,7 @@
 name: pages
 
-# The in-browser masking playground on GitHub Pages. Static only: no server, nothing
-# a visitor pastes leaves their browser.
+# The standalone (serverless) app on GitHub Pages, a mirror of the Vercel deploy.
+# Static only: masking runs in the browser, which calls the LLM provider directly.
 on:
   push:
     branches: [main]
@@ -32,16 +32,13 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - working-directory: web
-        env:
-          VITE_PAGES: "1"
         run: |
           npm ci --no-audit --no-fund
           npm run wasm
-          npx tsc --noEmit
-          npx vite build --base=/sudare/ --outDir dist-pages
+          npm run build:standalone -- --base=/sudare/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web/dist-pages
+          path: web/dist-standalone
 
   deploy:
     needs: build

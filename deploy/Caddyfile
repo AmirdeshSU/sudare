@@ -1,0 +1,12 @@
+# TLS in front of Sudare (docker compose --profile tls). Set in deploy/.env:
+#   SUDARE_DOMAIN  the name clients use, e.g. sudare.corp.example.com
+#   SUDARE_TLS     `internal` (Caddy's own CA; install its root on clients, see docs/deploy.md),
+#                  an email address (Let's Encrypt; needs public DNS and port 80), or
+#                  `/certs/fullchain.pem /certs/privkey.pem` (your CA; files in deploy/certs/)
+{$SUDARE_DOMAIN} {
+	tls {$SUDARE_TLS}
+	encode zstd gzip
+	reverse_proxy sudare:8080
+	header -Server
+	header Strict-Transport-Security "max-age=31536000"
+}

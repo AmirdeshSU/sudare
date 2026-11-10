@@ -1,17 +1,20 @@
-# docker compose -f deploy/docker-compose.yml up -d            # Sudare only
-# docker compose -f deploy/docker-compose.yml --profile ollama up -d   # plus a local model
+# On-prem Sudare. Copy deploy/.env.example to deploy/.env and fill it in (never commit it).
 #
-# Needs SUDARE_SECRET_KEY (run `sudare keygen`), e.g. in deploy/.env (never commit it).
-# The single-user login link is printed in `docker compose logs sudare`.
+#   docker compose -f deploy/docker-compose.yml up -d                    # Sudare on 127.0.0.1:8080
+#   docker compose -f deploy/docker-compose.yml --profile tls up -d      # plus Caddy TLS on :443
+#   docker compose -f deploy/docker-compose.yml --profile ollama up -d   # plus a local model
+#
+# Pulls the published image (SUDARE_VERSION, default `edge`); `up --build` builds this
+# checkout instead. The single-user login link is printed in `docker compose logs sudare`.
+# See docs/deploy.md.
 services:
   sudare:
+    image: ghcr.io/amirdeshsu/sudare:${SUDARE_VERSION:-edge}
     build:
       context: ..
       dockerfile: deploy/Dockerfile
-    image: sudare:local
     restart: unless-stopped
-    # Loopback only. Put a TLS reverse proxy in front before exposing it anywhere else,
-    # and set SUDARE_ALLOWED_HOSTS and SUDARE_COOKIE_SECURE=true there.
+    # Loopback only. With the tls profile, Caddy reaches it on the compose network.
     ports:
       - "127.0.0.1:8080:8080"
     environment:
@@ -20,13 +23,36 @@ services:
       SUDARE_TOKEN: ${SUDARE_TOKEN:-}
       SUDARE_ADMIN_PASSWORD: ${SUDARE_ADMIN_PASSWORD:-}
       SUDARE_RETENTION_DAYS: ${SUDARE_RETENTION_DAYS:-30}
+      # Behind TLS: your domain here, and SUDARE_COOKIE_SECURE=true.
+      SUDARE_ALLOWED_HOSTS: ${SUDARE_ALLOWED_HOSTS:-localhost:8080,127.0.0.1:8080}
+      SUDARE_COOKIE_SECURE: ${SUDARE_COOKIE_SECURE:-false}
       SUDARE_OLLAMA_URL: http://ollama:11434
       SUDARE_LOCAL_HOSTS: ollama
+      SUDARE_FORTISIEM_URL: ${SUDARE_FORTISIEM_URL:-}
+      SUDARE_FORTISIEM_CLIENT_ID: ${SUDARE_FORTISIEM_CLIENT_ID:-}
+      SUDARE_FORTISIEM_CLIENT_SECRET: ${SUDARE_FORTISIEM_CLIENT_SECRET:-}
+      SUDARE_FORTISIEM_TOKEN: ${SUDARE_FORTISIEM_TOKEN:-}
     volumes:
       - sudare-data:/data
     read_only: true
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]
+
+  caddy:
+    image: caddy:2.10.2
+    profiles: ["tls"]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SUDARE_DOMAIN: ${SUDARE_DOMAIN:-}
+      SUDARE_TLS: ${SUDARE_TLS:-internal}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/certs:ro
+      - caddy-data:/data
+    depends_on: [sudare]
 
   ollama:
     image: ollama/ollama:0.40.13
@@ -38,4 +64,5 @@ services:
 
 volumes:
   sudare-data:
+  caddy-data:
   ollama-models:

@@ -8,6 +8,7 @@
 //!   no masked value, and threat-intel providers only accept that type.
 #![forbid(unsafe_code)]
 
+pub mod analysis;
 pub mod attack;
 pub mod classify;
 pub mod engine;

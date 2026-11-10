@@ -7,6 +7,7 @@
   "scripts": {
     "wasm": "cargo build -p sudare-wasm --target wasm32-unknown-unknown --release --config profile.release.strip=false && wasm-bindgen --target web --out-dir src/wasm ../target/wasm32-unknown-unknown/release/sudare_wasm.wasm",
     "build": "tsc --noEmit && vite build",
+    "build:standalone": "tsc --noEmit && VITE_STANDALONE=1 vite build --outDir dist-standalone",
     "watch": "vite build --watch",
     "lint": "eslint .",
     "test": "node --test src/*.test.ts"
