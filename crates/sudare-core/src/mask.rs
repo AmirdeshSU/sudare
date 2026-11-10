@@ -625,12 +625,15 @@ impl Masker {
         }
         if !needles.is_empty() {
             let spans: HashSet<Span> = items.iter().map(|(e, _)| e.span).collect();
+            // Overlapping search: a leftmost-longest scan skips past a rejected match and
+            // hides shorter or later needles inside it (7.BB in "7.BB.bbB" when 7.BB.bb is
+            // glued). Step 3 merges whatever overlaps.
             let ac = AhoCorasick::builder()
                 .ascii_case_insensitive(true)
-                .match_kind(MatchKind::LeftmostLongest)
+                .match_kind(MatchKind::Standard)
                 .build(&needles)
                 .expect("propagation automaton");
-            for m in ac.find_iter(text) {
+            for m in ac.find_overlapping_iter(text) {
                 let span = Span::new(m.start(), m.end());
                 if spans.contains(&span) || !whole_word(text, span.start, span.end) {
                     continue;
@@ -850,6 +853,23 @@ impl Extractor for PolicyExtractor<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn propagation_finds_needles_inside_rejected_matches() {
+        // Found by fuzz/roundtrip: a rejected match hid a needle starting inside it, or a
+        // shorter needle at the same start.
+        let engine = crate::Engine::new(crate::Policy::default().strict()).unwrap();
+        for (input, value) in [
+            (r"E\x] E\0E\x\E 8\0*1*x\E?", r"x\E"),
+            ("a 7.BB b\nc 7.BB.bb d\ne 7.BB.bbB f", "7.BB"),
+        ] {
+            let p = engine.prepare(input, None, [7; 32]).unwrap();
+            let masked = p.input.text();
+            assert!(!masked.contains(&format!("{value} ")), "{masked}");
+            assert!(!masked.contains(&format!("{value}?")), "{masked}");
+            assert!(!masked.contains(&format!("{value}.bbB")), "{masked}");
+        }
+    }
 
     #[test]
     fn token_numbers_are_stable_and_sparse() {
