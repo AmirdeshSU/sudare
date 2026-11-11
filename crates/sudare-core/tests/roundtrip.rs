@@ -32,12 +32,31 @@ fn line((user, host, n, shape): &(String, String, u8, u8)) -> String {
     }
 }
 
+/// Random lowercase usernames, minus the words the masker deliberately leaves alone
+/// (placeholders like "nil" or "none", and built-in accounts like "root"): they name nobody.
+fn user_name() -> impl Strategy<Value = String> {
+    "[a-z]{3,10}".prop_filter("placeholder or built-in account", |u| {
+        !matches!(
+            u.as_str(),
+            "nil"
+                | "none"
+                | "null"
+                | "unknown"
+                | "undefined"
+                | "root"
+                | "daemon"
+                | "nobody"
+                | "system"
+        )
+    })
+}
+
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(256))]
 
     #[test]
     fn mask_hides_and_unmask_restores(
-        lines in prop::collection::vec(("[a-z]{3,10}", "[a-z]{2,6}-[0-9]{2}", 1u8..=254, 0u8..4), 1..20)
+        lines in prop::collection::vec((user_name(), "[a-z]{2,6}-[0-9]{2}", 1u8..=254, 0u8..4), 1..20)
     ) {
         let text: String = lines.iter().map(line).collect();
         let p = engine().prepare(&text, None, [9; 32]).unwrap();
