@@ -4,9 +4,10 @@
 useDefault = true
 
 [allowlist]
-description = "synthetic fixtures and their snapshots"
+description = "synthetic fixtures, their snapshots, and the empty-valued .env example"
 paths = [
     '''^fixtures/''',
     '''^crates/sudare-core/tests/snapshots/''',
     '''^crates/sudare-core/src/extract\.rs$''',
+    '''^deploy/\.env\.example$''',  # empty KEY= placeholders; the generic-api-key rule matches across lines
 ]
