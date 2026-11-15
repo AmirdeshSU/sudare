@@ -10,3 +10,7 @@ __pycache__/
 *.so
 *.pyd
 dist/
+# local server data (SUDARE_DATA_DIR=.local-data): holds password hashes and sealed history
+/.local-data/
+# graphify knowledge-graph output (regenerable)
+/graphify-out/
