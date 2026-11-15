@@ -231,6 +231,8 @@ Open the link and you get the web UI:
 
 The UI is compiled into the binary. The page CSP allows only same-origin scripts plus WebAssembly (`'wasm-unsafe-eval'`): no inline script, no `eval`, no third-party origin.
 
+Developer and operator docs: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md), [docs/OPERATIONS.md](docs/OPERATIONS.md), [docs/HANDOVER.md](docs/HANDOVER.md).
+
 Hosting options (browser-only static site, or on-prem Docker with TLS and air-gapped notes): see [docs/deploy.md](docs/deploy.md).
 
 Or with Docker. This binds to 127.0.0.1 only and runs a distroless, non-root, read-only container:
