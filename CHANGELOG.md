@@ -10,6 +10,13 @@
 - `/api/me` lists configured connectors.
 - The masking playground on GitHub Pages: https://amirdeshsu.github.io/sudare/
 
+- Standalone app: the whole flow in the browser (masking in WebAssembly, direct calls to
+  Gemini, OpenAI, Anthropic or local Ollama with the visitor's own key). Hosted on GitHub
+  Pages and Vercel; strict CSP.
+- On-prem packaging: `deploy/` compose file with optional Caddy TLS and Ollama profiles;
+  image published to ghcr.io; `docs/deploy.md`.
+- `sudare_core::analysis`: the offline half of the pipeline, shared by server and browser.
+
 ### Fixed
 - Masking: a repeated value was left unmasked when a longer or overlapping masked value
   matched at the same place but was rejected as glued to the next character (for
